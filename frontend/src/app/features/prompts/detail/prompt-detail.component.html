@@ -1,0 +1,63 @@
+<div class="page page-narrow">
+  <a routerLink="/prompts" class="back-link">← Back to Library</a>
+
+  <div class="state-center" *ngIf="loading">
+    <div class="loader"></div><p>Loading prompt…</p>
+  </div>
+
+  <div class="alert alert-error" *ngIf="error">{{ error }}</div>
+
+  <article class="detail-card" *ngIf="prompt">
+    <header class="detail-header">
+      <div class="detail-meta">
+        <span class="complexity-badge badge-{{ complexityLabel(prompt.complexity) }}">
+          {{ complexityLabel(prompt.complexity) | titlecase }}
+        </span>
+        <span class="meta-date">{{ prompt.created_at | date:'longDate' }}</span>
+      </div>
+      <h1 class="detail-title">{{ prompt.title }}</h1>
+
+      <!-- Tags -->
+      <div class="detail-tags" *ngIf="prompt.tags.length">
+        <span class="tag" *ngFor="let t of prompt.tags">{{ t.name }}</span>
+      </div>
+    </header>
+
+    <!-- Complexity bar -->
+    <div class="complexity-section">
+      <span class="section-label">Complexity</span>
+      <div class="complexity-bar">
+        <div
+          *ngFor="let n of complexityBar"
+          class="bar-segment"
+          [class.filled]="n <= prompt.complexity"
+          [class.segment-low]="n <= 3"
+          [class.segment-med]="n > 3 && n <= 6"
+          [class.segment-high]="n > 6">
+        </div>
+        <span class="bar-value">{{ prompt.complexity }}/10</span>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-section">
+      <span class="section-label">Prompt</span>
+      <div class="prompt-content">{{ prompt.content }}</div>
+      <button class="btn btn-ghost btn-sm copy-btn"
+        (click)="copyContent()"
+        #copyBtn>
+        📋 Copy Prompt
+      </button>
+    </div>
+
+    <!-- View counter -->
+    <footer class="detail-footer">
+      <div class="view-counter">
+        <span class="view-icon">👁</span>
+        <span class="view-count">{{ prompt.view_count | number }}</span>
+        <span class="view-label">{{ prompt.view_count === 1 ? 'view' : 'views' }}</span>
+        <span class="view-note">(live from Redis)</span>
+      </div>
+    </footer>
+  </article>
+</div>

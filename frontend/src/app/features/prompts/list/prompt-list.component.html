@@ -1,0 +1,57 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">AI Prompts</h1>
+      <p class="page-subtitle">{{ prompts.length }} prompt{{ prompts.length !== 1 ? 's' : '' }} in the library</p>
+    </div>
+    <a routerLink="/prompts/new" class="btn btn-primary">+ New Prompt</a>
+  </div>
+
+  <!-- Tag filters -->
+  <div class="tag-filters" *ngIf="tags.length">
+    <span class="filter-label">Filter:</span>
+    <button
+      *ngFor="let tag of tags"
+      class="tag-btn"
+      [class.active]="selectedTag === tag.name"
+      (click)="onTagFilter(tag.name)">
+      {{ tag.name }}
+    </button>
+    <button *ngIf="selectedTag" class="tag-btn clear" (click)="onTagFilter('')">✕ Clear</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="state-center" *ngIf="loading">
+    <div class="loader"></div><p>Loading prompts…</p>
+  </div>
+
+  <!-- Error -->
+  <div class="alert alert-error" *ngIf="error">{{ error }}</div>
+
+  <!-- Empty -->
+  <div class="state-center empty" *ngIf="!loading && !error && prompts.length === 0">
+    <div class="empty-icon">🔍</div>
+    <p>No prompts found{{ selectedTag ? ' for tag "' + selectedTag + '"' : '' }}.</p>
+    <a routerLink="/prompts/new" class="btn btn-primary">Create the first one</a>
+  </div>
+
+  <!-- Grid -->
+  <div class="prompt-grid" *ngIf="!loading && prompts.length">
+    <a
+      *ngFor="let p of prompts; trackBy: trackById"
+      [routerLink]="['/prompts', p.id]"
+      class="prompt-card">
+      <div class="card-top">
+        <span class="complexity-badge badge-{{ complexityLabel(p.complexity) }}">
+          {{ complexityLabel(p.complexity) | titlecase }} · {{ p.complexity }}/10
+        </span>
+        <span class="card-date">{{ p.created_at | date:'mediumDate' }}</span>
+      </div>
+      <h2 class="card-title">{{ p.title }}</h2>
+      <p class="card-excerpt">{{ p.content | slice:0:120 }}{{ p.content.length > 120 ? '…' : '' }}</p>
+      <div class="card-tags" *ngIf="p.tags.length">
+        <span class="tag" *ngFor="let t of p.tags">{{ t.name }}</span>
+      </div>
+    </a>
+  </div>
+</div>

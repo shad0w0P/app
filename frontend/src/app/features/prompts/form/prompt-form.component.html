@@ -1,0 +1,78 @@
+<div class="page page-narrow">
+  <a routerLink="/prompts" class="back-link">← Back to Library</a>
+  <h1 class="page-title">New Prompt</h1>
+
+  <form class="prompt-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+    <!-- Title -->
+    <div class="field">
+      <label class="label">Title <span class="required">*</span></label>
+      <input class="input" formControlName="title" type="text" placeholder="e.g. Cyberpunk City Scene"
+             [class.is-invalid]="f['title'].invalid && f['title'].touched" />
+      <span class="field-error" *ngIf="f['title'].touched && f['title'].errors?.['required']">Title is required.</span>
+      <span class="field-error" *ngIf="f['title'].touched && f['title'].errors?.['minlength']">Minimum 3 characters.</span>
+    </div>
+
+    <!-- Content -->
+    <div class="field">
+      <label class="label">Prompt Content <span class="required">*</span></label>
+      <textarea class="input textarea" formControlName="content" rows="6"
+                placeholder="Describe your AI image generation prompt in detail…"
+                [class.is-invalid]="f['content'].invalid && f['content'].touched"></textarea>
+      <div class="field-hint">{{ form.value.content?.length ?? 0 }} characters (min 20)</div>
+      <span class="field-error" *ngIf="f['content'].touched && f['content'].errors?.['required']">Content is required.</span>
+      <span class="field-error" *ngIf="f['content'].touched && f['content'].errors?.['minlength']">Minimum 20 characters.</span>
+    </div>
+
+    <!-- Complexity -->
+    <div class="field">
+      <label class="label">
+        Complexity <span class="required">*</span>
+        <span class="complexity-preview" [ngClass]="complexityClass">
+          {{ complexityValue }}/10
+        </span>
+      </label>
+      <input class="range-input" formControlName="complexity" type="range" min="1" max="10" step="1" />
+      <div class="range-labels"><span>Simple (1)</span><span>Complex (10)</span></div>
+      <span class="field-error" *ngIf="f['complexity'].touched && f['complexity'].errors?.['range']">Must be between 1 and 10.</span>
+    </div>
+
+    <!-- Tags -->
+    <div class="field">
+      <label class="label">Tags</label>
+
+      <!-- Existing tags -->
+      <div class="tag-selector" *ngIf="availableTags.length">
+        <button type="button" *ngFor="let t of availableTags"
+                class="tag-btn" [class.active]="selectedTags.includes(t.name)"
+                (click)="toggleTag(t.name)">
+          {{ t.name }}
+        </button>
+      </div>
+
+      <!-- Custom tag input -->
+      <div class="tag-input-row">
+        <input class="input input-sm" formControlName="newTag" type="text" placeholder="Add custom tag…"
+               (keydown.enter)="$event.preventDefault(); addCustomTag()" />
+        <button type="button" class="btn btn-ghost btn-sm" (click)="addCustomTag()">Add</button>
+      </div>
+
+      <!-- Selected -->
+      <div class="selected-tags" *ngIf="selectedTags.length">
+        <span class="tag selected-tag" *ngFor="let t of selectedTags">
+          {{ t }} <button type="button" class="tag-remove" (click)="removeTag(t)">✕</button>
+        </span>
+      </div>
+    </div>
+
+    <div class="server-error" *ngIf="serverError">{{ serverError }}</div>
+
+    <div class="form-actions">
+      <a routerLink="/prompts" class="btn btn-ghost">Cancel</a>
+      <button class="btn btn-primary" type="submit" [disabled]="loading">
+        <span *ngIf="loading" class="spinner"></span>
+        {{ loading ? 'Saving…' : 'Create Prompt' }}
+      </button>
+    </div>
+  </form>
+</div>
