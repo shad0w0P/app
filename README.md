@@ -20,7 +20,7 @@ A full-stack app to store, browse, and manage AI image generation prompts.
 
 ```bash
 git clone <repo-url>
-cd prompt-library
+cd app
 docker-compose up --build
 ```
 
