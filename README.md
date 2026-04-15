@@ -54,7 +54,8 @@ cd frontend
 npm install
 npm start        # serves on http://localhost:4200
 ```
-
+## HOSTED LINK
+https://prompt-libraryy.netlify.app/prompts
 ---
 
 ## API Endpoints
